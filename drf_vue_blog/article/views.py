@@ -8,6 +8,8 @@ from article.models import Article
 from article.serializers import ArticleSerializer
 from article.models import Category
 from article.serializers import CategorySerializer, CategoryDetailSerializer
+from article.models import Tag
+from article.serializers import TagSerializer
 
 # class ArticleList(generics.ListCreateAPIView):
 #     queryset = Article.objects.all()
@@ -35,6 +37,10 @@ from article.serializers import CategorySerializer, CategoryDetailSerializer
 #     def delete(self, request, *args, **kwargs):
 #         return self.destroy(request, *args, **kwargs)
 
+class TagViewSet(viewsets.ModelViewSet):
+    queryset = Tag.objects.all()
+    serializer_class = TagSerializer
+    permission_classes = [IsAdminUserOrReadOnly]
 
 class CategoryViewSet(viewsets.ModelViewSet):
     """分类视图集"""
