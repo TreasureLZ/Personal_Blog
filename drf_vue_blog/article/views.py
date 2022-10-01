@@ -5,37 +5,19 @@ from rest_framework import filters
 
 from article.permissions import IsAdminUserOrReadOnly
 from article.models import Article
-from article.serializers import ArticleSerializer
+from article.serializers import ArticleSerializer, ArticleDetailSerializer
 from article.models import Category
 from article.serializers import CategorySerializer, CategoryDetailSerializer
 from article.models import Tag
 from article.serializers import TagSerializer
+from article.models import Avatar
+from article.serializers import AvatarSerializer
 
-# class ArticleList(generics.ListCreateAPIView):
-#     queryset = Article.objects.all()
-#     serializer_class = ArticleListSerializer
-#     permission_classes = [IsAdminUserOrReadOnly]
-#
-#     def perform_create(self, serializer):
-#         serializer.save(author=self.request.user)
-#
-# class ArticleDetail(mixins.RetrieveModelMixin,
-#                     mixins.UpdateModelMixin,
-#                     mixins.DestroyModelMixin,
-#                     generics.GenericAPIView):
-#     """文章详情视图"""
-#     queryset = Article.objects.all()
-#     serializer_class = ArticleListSerializer
-#     permission_classes = [IsAdminUserOrReadOnly]
-#
-#     def get(self, request, *args, **kwargs):
-#         return self.retrieve(request, *args, **kwargs)
-#
-#     def put(self, request, *args, **kwargs):
-#         return self.update(request, *args, **kwargs)
-#
-#     def delete(self, request, *args, **kwargs):
-#         return self.destroy(request, *args, **kwargs)
+
+class AvatarViewSet(viewsets.ModelViewSet):
+    queryset = Avatar.objects.all()
+    serializer_class = AvatarSerializer
+    permission_classes = [IsAdminUserOrReadOnly]
 
 class TagViewSet(viewsets.ModelViewSet):
     queryset = Tag.objects.all()
@@ -73,3 +55,9 @@ class ArticleViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(author__username=username)
 
         return queryset
+
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return ArticleSerializer
+        else:
+            return ArticleDetailSerializer

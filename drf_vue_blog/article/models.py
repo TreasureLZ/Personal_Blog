@@ -1,7 +1,10 @@
 from django.db import models
 from django.utils import  timezone
 from django.contrib.auth.models import User
+from markdown import Markdown
 
+class Avatar(models.Model):
+    content = models.ImageField(upload_to='avatar/%Y%m%d')
 
 class Tag(models.Model):
     """文章标签"""
@@ -48,6 +51,15 @@ class Article(models.Model):
         blank=True,
         related_name='articles'
     )
+
+    # 标题图
+    avatar = models.ForeignKey(
+        Avatar,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='article'
+    )
     title = models.CharField(max_length=100)
     # 正文
     body = models.TextField()
@@ -58,6 +70,18 @@ class Article(models.Model):
 
     def __str__(self):
         return self.title
+
+    def get_md(self):
+        md = Markdown(
+            extensions=[
+                'markdown.extensions.extra',
+                'markdown.extensions.codehilite',
+                'markdown.extensions.toc',
+            ]
+        )
+        md_body = md.convert(self.body)
+        # toc 是渲染后的目录
+        return md_body, md.toc
 
     class Meta:
         ordering = ['-created']
